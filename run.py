@@ -1,10 +1,6 @@
 from PIL import Image
 from Slimbits import Slimbit
 
-new_width = 600
-
-ASCII_CHARS = [ '#', '?', '%', '.', 'S', '+', '.', '*', ':', ',', '@']
-
 def scale_image(image):
     """Resizes an image preserving the aspect ratio.
     """
@@ -32,13 +28,15 @@ def map_pixels_to_slimbits(image, range_width=25):
     bit_size = 20
     slimbit = Slimbit(bit_size)
     
+    # Get Current size and calc new size
     (width, height) = image.size
     new_size = (width * bit_size, height * bit_size)
 
-    print(image)
+    # create new image to draw slimbits on
     d = get_slimbit_density_denominator(image)
     new_image = Image.new('RGB', new_size)
     
+    # Get pixel data of image
     pixels_in_image = list(image.getdata())
     count = len(pixels_in_image)
     
@@ -53,11 +51,11 @@ def map_pixels_to_slimbits(image, range_width=25):
         width_index += 1
         # Get density
         density = int(pixels_in_image[i] / d)
-        # Get fill
-        print(pixels_in_image[i])
-        # bit = slimbit.create(density)
-        # offset = (width_index * bit_size, height_index * bit_size)
-        # new_image.paste(bit, offset)
+        # TODO: Get fill for supporting colours
+        # print(pixels_in_image[i])
+        bit = slimbit.create(density)
+        offset = (width_index * bit_size, height_index * bit_size)
+        new_image.paste(bit, offset)
         
     return new_image
     
@@ -66,10 +64,6 @@ def convert_image_to_slimbits(image):
     image = convert_to_grayscale(image)
     pixels_to_slimbits = map_pixels_to_slimbits(image)
     return pixels_to_slimbits
-
-def playground(image):
-    slimbit = Slimbit(200)
-    slimbit.create()
 
 def handle_image_conversion(image_filepath):
     image = None
@@ -81,7 +75,7 @@ def handle_image_conversion(image_filepath):
         return
     
     image_slimbits = convert_image_to_slimbits(image)
-    image_slimbits.save('./first.jpeg', "JPEG")
+    image_slimbits.save('./image.jpeg', "JPEG")
 
 if __name__=='__main__':
     import sys
